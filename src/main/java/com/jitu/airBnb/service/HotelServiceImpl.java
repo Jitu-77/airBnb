@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -60,11 +61,22 @@ public class HotelServiceImpl implements HotelService {
                 throw new ResourceNotFoundException("Hotel not found with ID: "+id);
             }
         hotelRepository.deleteById(id);
-        // delete future inv fot this hotel
+        // delete future inv for this hotel
     }
 
     @Override
+    @Transactional
     public void activateHotel(Long hotelId) {
+        log.info("Activating the hotel with ID: {}", hotelId);
+        Hotel hotel = hotelRepository
+                .findById(hotelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID: "+hotelId));
 
+        hotel.setActive(true);
+        // create future inv for this hotel
+        // assuming only do it once
+//        for(Room room: hotel.getRooms()) {
+//            inventoryService.initializeRoomForAYear(room);
+//        }
     }
 }
