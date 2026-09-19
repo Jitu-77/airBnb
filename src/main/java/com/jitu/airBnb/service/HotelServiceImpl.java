@@ -5,6 +5,7 @@ import com.jitu.airBnb.entity.Hotel;
 import com.jitu.airBnb.entity.Room;
 import com.jitu.airBnb.exception.ResourceNotFoundException;
 import com.jitu.airBnb.repository.HotelRepository;
+import com.jitu.airBnb.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -19,6 +20,7 @@ public class HotelServiceImpl implements HotelService {
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
     private final InventoryService inventoryService;
+    private final RoomRepository roomRepository;
 
     @Override
     public HotelDto createNewHotel(HotelDto hotelDto) {
@@ -67,8 +69,11 @@ public class HotelServiceImpl implements HotelService {
                         new ResourceNotFoundException("Hotel not found with ID: "+id));
         // delete future inv for this hotel
         for(Room room: hotel.getRooms()) {
-            inventoryService.deleteFutureInventories(room);
+//            inventoryService.deleteFutureInventories(room);
+            inventoryService.deleteAllInventories(room);
+            roomRepository.deleteById(room.getId());
         }
+        hotelRepository.deleteById(id);
     }
 
     @Override

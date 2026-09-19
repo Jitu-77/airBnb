@@ -9,5 +9,7 @@ import java.time.LocalDate;
 
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
-    void deleteByDateAfterAndRoom(LocalDate date, Room room);
+//    void deleteByDateAfterAndRoom(LocalDate date, Room room);
+      void deleteByRoom(Room room);
 }
+
