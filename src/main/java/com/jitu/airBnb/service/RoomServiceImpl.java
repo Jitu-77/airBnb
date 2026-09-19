@@ -22,7 +22,7 @@ public class RoomServiceImpl implements RoomService{
 
     private final RoomRepository roomRepository;
     private final HotelRepository hotelRepository;
-//    private final InventoryService inventoryService;
+    private final InventoryService inventoryService;
     private final ModelMapper modelMapper;
 
     @Override
@@ -35,9 +35,10 @@ public class RoomServiceImpl implements RoomService{
         room.setHotel(hotel);
         room = roomRepository.save(room);
 
-//        if (hotel.getActive()) {
-//            inventoryService.initializeRoomForAYear(room);
-//        }
+        //update Inventory for rooms
+        if (hotel.getActive()) {
+            inventoryService.initializeRoomForAYear(room);
+        }
 
         return modelMapper.map(room, RoomDto.class);
     }
@@ -68,18 +69,18 @@ public class RoomServiceImpl implements RoomService{
     @Override
     public void deleteRoomById(Long roomId) {
         log.info("Deleting the room with ID: {}", roomId);
-
-
-        Boolean exists = roomRepository.existsById(roomId);
-        if(!exists){
-            throw new ResourceNotFoundException("Room not found with ID: "+roomId);
-        }
-        roomRepository.deleteById(roomId);
-        // delete future inv for this hotel
-//        Room room = roomRepository
-//                .findById(roomId)
-//                .orElseThrow(() -> new ResourceNotFoundException("Room not found with ID: "+roomId));
-//        inventoryService.deleteFutureInventories(room);
+//        Boolean exists = roomRepository.existsById(roomId);
+//        if(!exists){
+//            throw new ResourceNotFoundException("Room not found with ID: "+roomId);
+//        }
 //        roomRepository.deleteById(roomId);
+        //-----------------OR------------------
+        // delete future inv for this hotel
+        Room room = roomRepository
+                .findById(roomId)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Room not found with ID: "+roomId));
+        inventoryService.deleteFutureInventories(room);
+        roomRepository.deleteById(roomId);
     }
 }

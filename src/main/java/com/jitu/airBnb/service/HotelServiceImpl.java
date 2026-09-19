@@ -2,6 +2,7 @@ package com.jitu.airBnb.service;
 
 import com.jitu.airBnb.dto.HotelDto;
 import com.jitu.airBnb.entity.Hotel;
+import com.jitu.airBnb.entity.Room;
 import com.jitu.airBnb.exception.ResourceNotFoundException;
 import com.jitu.airBnb.repository.HotelRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class HotelServiceImpl implements HotelService {
 
     private final HotelRepository hotelRepository;
     private final ModelMapper modelMapper;
+    private final InventoryService inventoryService;
 
     @Override
     public HotelDto createNewHotel(HotelDto hotelDto) {
@@ -51,17 +53,22 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
+    @Transactional
     public void deleteHotelById(Long id) {
-//    public void deleteHotelById(Long id) {
-//        Hotel hotel = hotelRepository
-//                .findById(id)
-//                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID: "+id));
-            Boolean exists = hotelRepository.existsById(id);
-            if(!exists){
-                throw new ResourceNotFoundException("Hotel not found with ID: "+id);
-            }
-        hotelRepository.deleteById(id);
+//            Boolean exists = hotelRepository.existsById(id);
+//            if(!exists){
+//                throw new ResourceNotFoundException("Hotel not found with ID: "+id);
+//            }
+//        hotelRepository.deleteById(id);
+        //------------or----------
+        Hotel hotel = hotelRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Hotel not found with ID: "+id));
         // delete future inv for this hotel
+        for(Room room: hotel.getRooms()) {
+            inventoryService.deleteFutureInventories(room);
+        }
     }
 
     @Override
@@ -75,8 +82,8 @@ public class HotelServiceImpl implements HotelService {
         hotel.setActive(true);
         // create future inv for this hotel
         // assuming only do it once
-//        for(Room room: hotel.getRooms()) {
-//            inventoryService.initializeRoomForAYear(room);
-//        }
+        for(Room room: hotel.getRooms()) {
+            inventoryService.initializeRoomForAYear(room);
+        }
     }
 }
