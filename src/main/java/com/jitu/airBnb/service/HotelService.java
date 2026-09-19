@@ -2,6 +2,7 @@ package com.jitu.airBnb.service;
 
 
 import com.jitu.airBnb.dto.HotelDto;
+import com.jitu.airBnb.dto.HotelInfoDto;
 
 public interface HotelService {
     HotelDto createNewHotel(HotelDto hotelDto);
@@ -13,5 +14,7 @@ public interface HotelService {
     void deleteHotelById(Long id);
 
     void activateHotel(Long hotelId);
+
+    HotelInfoDto getHotelInfoById(Long hotelId);
 
 }
