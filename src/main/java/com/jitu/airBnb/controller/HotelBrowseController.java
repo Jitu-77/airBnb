@@ -3,6 +3,7 @@ package com.jitu.airBnb.controller;
 
 import com.jitu.airBnb.dto.HotelDto;
 import com.jitu.airBnb.dto.HotelInfoDto;
+import com.jitu.airBnb.dto.HotelPriceDto;
 import com.jitu.airBnb.dto.HotelSearchRequest;
 import com.jitu.airBnb.service.HotelService;
 import com.jitu.airBnb.service.InventoryService;
@@ -20,10 +21,16 @@ public class HotelBrowseController {
     private final InventoryService inventoryService;
     private final HotelService hotelService;
 
+//    @GetMapping("/search")
+//    public ResponseEntity<Page<HotelDto>> searchHotels(@RequestBody HotelSearchRequest hotelSearchRequest) {
+//
+//        Page<HotelDto> page = inventoryService.searchHotels(hotelSearchRequest);
+//        return ResponseEntity.ok(page);
+//    }
     @GetMapping("/search")
-    public ResponseEntity<Page<HotelDto>> searchHotels(@RequestBody HotelSearchRequest hotelSearchRequest) {
+    public ResponseEntity<Page<HotelPriceDto>> searchHotels(@RequestBody HotelSearchRequest hotelSearchRequest) {
 
-        Page<HotelDto> page = inventoryService.searchHotels(hotelSearchRequest);
+        Page<HotelPriceDto> page = inventoryService.searchHotels(hotelSearchRequest);
         return ResponseEntity.ok(page);
     }
 
